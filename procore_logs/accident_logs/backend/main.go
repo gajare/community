@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 	"os"
-	handlers "procore_logs/handler"
+
+	"procore-accident-logs/handlers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"

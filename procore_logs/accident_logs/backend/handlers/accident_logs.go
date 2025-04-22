@@ -232,6 +232,7 @@ func GetFilteredAccidentLogs(c *gin.Context) {
 	req.Header.Set("Authorization", accessToken)
 	req.Header.Set("Procore-Company-Id", companyID)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	// fmt.Println("\nrequest :", req, "\n")
 
 	// Execute the request
 	client := &http.Client{}
@@ -240,6 +241,9 @@ func GetFilteredAccidentLogs(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to contact Procore API: " + err.Error()})
 		return
 	}
+	fmt.Printf("Procore API response code: %d\n", resp.StatusCode)
+	// fmt.Printf("Procore API response body: %s\n", string(body))
+
 	defer resp.Body.Close()
 
 	// Read the response
@@ -248,6 +252,7 @@ func GetFilteredAccidentLogs(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read response: " + err.Error()})
 		return
 	}
+	fmt.Printf("Procore API response body: %s\n", string(body))
 
 	// Parse the response
 	var logs []map[string]interface{}
@@ -258,6 +263,57 @@ func GetFilteredAccidentLogs(c *gin.Context) {
 
 	// Apply additional filters (severity and company) locally since Procore API may not support them
 	filteredLogs := make([]map[string]interface{}, 0)
+
+	// Get search query parameter
+	searchTerm := c.Query("search")
+
+	fmt.Println("Search term:", searchTerm)
+
+	// ... existing code ...
+
+	// Apply search filter
+	if searchTerm != "" {
+		searchTerm = strings.ToLower(searchTerm)
+		filteredBySearch := make([]map[string]interface{}, 0)
+
+		for _, log := range filteredLogs {
+			match := false
+
+			// Check all relevant fields
+			fieldsToSearch := []string{
+				"involved_name",
+				"involved_company",
+				"comments",
+				"location",
+				"severity",
+			}
+
+			for _, field := range fieldsToSearch {
+				if value, ok := log[field].(string); ok {
+					if strings.Contains(strings.ToLower(value), searchTerm) {
+						match = true
+						break
+					}
+				}
+			}
+
+			// Check numeric/date fields if needed
+			if !match {
+				if date, ok := log["date"].(string); ok {
+					if strings.Contains(date, searchTerm) {
+						match = true
+					}
+				}
+			}
+
+			if match {
+				filteredBySearch = append(filteredBySearch, log)
+			}
+		}
+
+		filteredLogs = filteredBySearch
+	}
+
 	for _, log := range logs {
 		// Apply severity filter
 		if severity != "" {

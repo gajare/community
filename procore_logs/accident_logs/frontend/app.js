@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentFilters = {};
 
     // DOM elements
+    const searchFilter = document.getElementById('searchFilter');
     const getAuthBtn = document.getElementById('getAuthBtn');
     const getTokenBtn = document.getElementById('getTokenBtn');
     const authCodeInput = document.getElementById('authCode');
@@ -15,6 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const severityFilter = document.getElementById('severityFilter');
     const companyFilter = document.getElementById('companyFilter');
     const filterLogsBtn = document.getElementById('filterLogsBtn');
+    const filterSearchBtn = document.getElementById('filterSearchBtn');
+
     const clearFilterBtn = document.getElementById('clearFilterBtn');
 
     // Set default date values to current month
@@ -40,6 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     getTokenBtn.addEventListener('click', getAccessToken);
     refreshLogsBtn.addEventListener('click', () => fetchAccidentLogs(currentFilters));
     filterLogsBtn.addEventListener('click', applyDateFilter);
+    filterSearchBtn.addEventListener('click', applySearchFilter);
     clearFilterBtn.addEventListener('click', clearDateFilter);
 
     // Get authorization code
@@ -169,6 +173,80 @@ document.addEventListener('DOMContentLoaded', function() {
         `).join('');
     }
 
+    // // Add debounce to search input
+    // let daterangeTimeout;
+    // searchFilter.addEventListener('input', () => {
+    //     clearTimeout(daterangeTimeout);
+    //     daterangeTimeout = setTimeout(() => {
+    //         applySearchFilter();
+    //     }, 500);
+    // });
+
+    // let searchTimeout;
+    // searchFilter.addEventListener('input', () => {
+    //     clearTimeout(searchTimeout);
+    //     searchTimeout = setTimeout(() => {
+    //         applySearchFilter();
+    //     }, 500);
+    // });
+
+    function applySearchFilter() {
+        const searchTerm = searchFilter.value.trim();
+    
+        // Check if the search term is a numeric ID
+        if (!isNaN(searchTerm) && searchTerm !== '') {
+            const logId = parseInt(searchTerm, 10);
+            if (!isNaN(logId)) {
+                fetchAccidentLogById(logId);
+                return;
+            }
+        }
+    
+        // Proceed with normal search if not an ID
+        currentFilters = { ...(searchTerm && { search: searchTerm }) };
+        fetchAccidentLogs(currentFilters)
+            .catch(error => {
+                console.error('Filter error:', error);
+                showError('Failed to apply filters. Please try again.');
+            });
+    }
+    
+    function fetchAccidentLogById(id) {
+        if (!accessToken) {
+            showError('Please authenticate first');
+            return;
+        }
+    
+        setLoading(filterSearchBtn, true);
+    
+        fetch(`${API_BASE_URL}/api/accident-logs/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || 'Log not found');
+                });
+            }
+            return response.json();
+        })
+        .then(log => {
+            if (log && Object.keys(log).length > 0) {
+                renderLogsList([log]); // Wrap log in array for consistent rendering
+            } else {
+                logsList.innerHTML = '<div class="no-logs">Log not found</div>';
+            }
+        })
+        .catch(error => {
+            showError(error.message);
+            logsList.innerHTML = '<div class="no-logs">Log not found</div>';
+        })
+        .finally(() => {
+            setLoading(filterSearchBtn, false);
+        });
+    }
     // Apply date filter
     function applyDateFilter() {
         const fromDate = fromDateInput.value;
@@ -192,8 +270,8 @@ document.addEventListener('DOMContentLoaded', function() {
         currentFilters = {
             ...(fromDate && { fromDate }),
             ...(toDate && { toDate }),
-            ...(severity && { severity }),
-            ...(company && { company })
+            // ...(severity && { severity }),
+            // ...(company && { company }),
         };
 
         fetchAccidentLogs(currentFilters)
