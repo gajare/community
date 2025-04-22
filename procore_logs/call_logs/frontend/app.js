@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const companyFilter = document.getElementById('companyFilter');
     const filterLogsBtn = document.getElementById('filterLogsBtn');
     const filterSearchBtn = document.getElementById('filterSearchBtn');
+    tokenStatus.style.display = "none";
 
     const clearFilterBtn = document.getElementById('clearFilterBtn');
 
@@ -81,6 +82,9 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('procoreAccessToken', accessToken);
             updateTokenStatus();
             showSuccess('Access token obtained successfully');
+            getTokenBtn.style.display = "none";
+            getAuthBtn.style.display="none"
+            authCodeInput.style.display="none"
             fetchAccidentLogs();
         })
         .catch(error => {
