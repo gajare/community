@@ -111,7 +111,7 @@ func GetcallLogs(c *gin.Context) {
 	projectID := os.Getenv("PROCORE_PROJECT_ID")
 	companyID := os.Getenv("PROCORE_COMPANY_ID")
 
-	apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/" + projectID + "/call_logs"
+	apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/" + projectID + "/equipment_logs"
 
 	req, err := http.NewRequest("GET", apiUrl, nil)
 	if err != nil {
@@ -155,9 +155,9 @@ func GetcallLogDetails(c *gin.Context) {
 
 	projectID := os.Getenv("PROCORE_PROJECT_ID")
 	companyID := os.Getenv("PROCORE_COMPANY_ID")
-	// apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/117922/call_logs/712"
+	// apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/117922/equipment_logs/712"
 
-	apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/" + projectID + "/call_logs/" + logID
+	apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/" + projectID + "/equipment_logs/" + logID
 	fmt.Println("projectID :", projectID)
 	fmt.Println("logID :", logID)
 
@@ -212,7 +212,7 @@ func GetFilteredCallLogs(c *gin.Context) {
 	}
 
 	// Build Procore API URL with date parameters
-	baseURL := fmt.Sprintf("https://sandbox.procore.com/rest/v1.0/projects/%s/call_logs", projectID)
+	baseURL := fmt.Sprintf("https://sandbox.procore.com/rest/v1.0/projects/%s/equipment_logs", projectID)
 
 	// Create request to Procore API
 	req, err := http.NewRequest("GET", baseURL, nil)
@@ -367,7 +367,7 @@ func CreateCallLog(c *gin.Context) {
 		formData.Set("call_log[location]", logData.Location)
 	}
 
-	req, err := http.NewRequest("POST", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/call_logs", bytes.NewBufferString(formData.Encode()))
+	req, err := http.NewRequest("POST", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/equipment_logs", bytes.NewBufferString(formData.Encode()))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -445,7 +445,7 @@ func UpdateCallLog(c *gin.Context) {
 		formData.Set("call_log[location]", logData.Location)
 	}
 
-	req, err := http.NewRequest("PUT", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/call_logs/"+logID, bytes.NewBufferString(formData.Encode()))
+	req, err := http.NewRequest("PUT", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/equipment_logs/"+logID, bytes.NewBufferString(formData.Encode()))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -488,7 +488,7 @@ func DeleteCallLog(c *gin.Context) {
 	projectID := os.Getenv("PROCORE_PROJECT_ID")
 	companyID := os.Getenv("PROCORE_COMPANY_ID")
 
-	req, err := http.NewRequest("DELETE", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/call_logs/"+logID, nil)
+	req, err := http.NewRequest("DELETE", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/equipment_logs/"+logID, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

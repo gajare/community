@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const API_BASE_URL = 'http://localhost:8082';
+    const API_BASE_URL = 'http://localhost:8081';
     let accessToken = localStorage.getItem('procoreAccessToken') || '';
     let currentFilters = {};
 
@@ -109,8 +109,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (filters.company) params.append('company', filters.company);
         
         const url = params.toString() 
-            ? `${API_BASE_URL}/api/call_logs/filter?${params.toString()}`
-            : `${API_BASE_URL}/api/call_logs`;
+            ? `${API_BASE_URL}/api/equipment_logs/filter?${params.toString()}`
+            : `${API_BASE_URL}/api/equipment_logs`;
 
         return fetch(url, {
             headers: {
@@ -218,9 +218,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     
         setLoading(filterSearchBtn, true);
-        console.log("url:",`${API_BASE_URL}/api/call_logs/${id}`);
+        console.log("url:",`${API_BASE_URL}/api/equipment_logs/${id}`);
         
-        fetch(`${API_BASE_URL}/api/call_logs/${id}`, {
+        fetch(`${API_BASE_URL}/api/equipment_logs/${id}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
