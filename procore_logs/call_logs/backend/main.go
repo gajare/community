@@ -37,12 +37,12 @@ func main() {
 
 	// Routes
 	router.POST("/api/auth/token", handlers.GetAuthToken)
-	router.GET("/api/call_logs", handlers.GetAccidentLogs)
-	router.GET("/api/call_logs/filter", handlers.GetFilteredAccidentLogs)
-	router.POST("/api/call_logs", handlers.CreateAccidentLog)
-	router.PUT("/api/call_logs/:id", handlers.UpdateAccidentLog)
-	router.DELETE("/api/call_logs/:id", handlers.DeleteAccidentLog)
-	router.GET("/api/call_logs/:id", handlers.GetAccidentLogDetails)
+	router.GET("/api/call_logs", handlers.GetcallLogs)
+	router.GET("/api/call_logs/filter", handlers.GetFilteredCallLogs)
+	router.POST("/api/call_logs", handlers.CreateCallLog)
+	router.PUT("/api/call_logs/:id", handlers.UpdateCallLog)
+	router.DELETE("/api/call_logs/:id", handlers.DeleteCallLog)
+	router.GET("/api/call_logs/:id", handlers.GetcallLogDetails)
 
 	// Start server
 	port := os.Getenv("PORT")

@@ -15,7 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AccidentLog struct {
+type callLog struct {
 	ID              int    `json:"id"`
 	Comments        string `json:"comments"`
 	Date            string `json:"date"`
@@ -101,7 +101,7 @@ func GetAuthToken(c *gin.Context) {
 	})
 }
 
-func GetAccidentLogs(c *gin.Context) {
+func GetcallLogs(c *gin.Context) {
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
@@ -139,7 +139,7 @@ func GetAccidentLogs(c *gin.Context) {
 	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
 }
 
-func GetAccidentLogDetails(c *gin.Context) {
+func GetcallLogDetails(c *gin.Context) {
 
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
@@ -188,7 +188,7 @@ func GetAccidentLogDetails(c *gin.Context) {
 	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
 }
 
-func GetFilteredAccidentLogs(c *gin.Context) {
+func GetFilteredCallLogs(c *gin.Context) {
 	// Get Authorization header
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
@@ -336,14 +336,14 @@ func GetFilteredAccidentLogs(c *gin.Context) {
 	c.JSON(http.StatusOK, filteredLogs)
 }
 
-func CreateAccidentLog(c *gin.Context) {
+func CreateCallLog(c *gin.Context) {
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
 		return
 	}
 
-	var logData AccidentLog
+	var logData callLog
 	if err := c.ShouldBindJSON(&logData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -353,18 +353,18 @@ func CreateAccidentLog(c *gin.Context) {
 	companyID := os.Getenv("PROCORE_COMPANY_ID")
 
 	formData := url.Values{}
-	formData.Set("accident_log[comments]", logData.Comments)
-	formData.Set("accident_log[date]", logData.Date)
-	formData.Set("accident_log[datetime]", logData.Datetime)
-	formData.Set("accident_log[involved_company]", logData.InvolvedCompany)
-	formData.Set("accident_log[involved_name]", logData.InvolvedName)
-	formData.Set("accident_log[time_hour]", strconv.Itoa(logData.TimeHour))
-	formData.Set("accident_log[time_minute]", strconv.Itoa(logData.TimeMinute))
+	formData.Set("call_log[comments]", logData.Comments)
+	formData.Set("call_log[date]", logData.Date)
+	formData.Set("call_log[datetime]", logData.Datetime)
+	formData.Set("call_log[involved_company]", logData.InvolvedCompany)
+	formData.Set("call_log[involved_name]", logData.InvolvedName)
+	formData.Set("call_log[time_hour]", strconv.Itoa(logData.TimeHour))
+	formData.Set("call_log[time_minute]", strconv.Itoa(logData.TimeMinute))
 	if logData.Severity != "" {
-		formData.Set("accident_log[severity]", logData.Severity)
+		formData.Set("call_log[severity]", logData.Severity)
 	}
 	if logData.Location != "" {
-		formData.Set("accident_log[location]", logData.Location)
+		formData.Set("call_log[location]", logData.Location)
 	}
 
 	req, err := http.NewRequest("POST", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/call_logs", bytes.NewBufferString(formData.Encode()))
@@ -394,7 +394,7 @@ func CreateAccidentLog(c *gin.Context) {
 	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
 }
 
-func UpdateAccidentLog(c *gin.Context) {
+func UpdateCallLog(c *gin.Context) {
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
@@ -407,7 +407,7 @@ func UpdateAccidentLog(c *gin.Context) {
 		return
 	}
 
-	var logData AccidentLog
+	var logData callLog
 	if err := c.ShouldBindJSON(&logData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -418,31 +418,31 @@ func UpdateAccidentLog(c *gin.Context) {
 
 	formData := url.Values{}
 	if logData.Comments != "" {
-		formData.Set("accident_log[comments]", logData.Comments)
+		formData.Set("call_log[comments]", logData.Comments)
 	}
 	if logData.Date != "" {
-		formData.Set("accident_log[date]", logData.Date)
+		formData.Set("call_log[date]", logData.Date)
 	}
 	if logData.Datetime != "" {
-		formData.Set("accident_log[datetime]", logData.Datetime)
+		formData.Set("call_log[datetime]", logData.Datetime)
 	}
 	if logData.InvolvedCompany != "" {
-		formData.Set("accident_log[involved_company]", logData.InvolvedCompany)
+		formData.Set("call_log[involved_company]", logData.InvolvedCompany)
 	}
 	if logData.InvolvedName != "" {
-		formData.Set("accident_log[involved_name]", logData.InvolvedName)
+		formData.Set("call_log[involved_name]", logData.InvolvedName)
 	}
 	if logData.TimeHour != 0 {
-		formData.Set("accident_log[time_hour]", strconv.Itoa(logData.TimeHour))
+		formData.Set("call_log[time_hour]", strconv.Itoa(logData.TimeHour))
 	}
 	if logData.TimeMinute != 0 {
-		formData.Set("accident_log[time_minute]", strconv.Itoa(logData.TimeMinute))
+		formData.Set("call_log[time_minute]", strconv.Itoa(logData.TimeMinute))
 	}
 	if logData.Severity != "" {
-		formData.Set("accident_log[severity]", logData.Severity)
+		formData.Set("call_log[severity]", logData.Severity)
 	}
 	if logData.Location != "" {
-		formData.Set("accident_log[location]", logData.Location)
+		formData.Set("call_log[location]", logData.Location)
 	}
 
 	req, err := http.NewRequest("PUT", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/call_logs/"+logID, bytes.NewBufferString(formData.Encode()))
@@ -472,7 +472,7 @@ func UpdateAccidentLog(c *gin.Context) {
 	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
 }
 
-func DeleteAccidentLog(c *gin.Context) {
+func DeleteCallLog(c *gin.Context) {
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
