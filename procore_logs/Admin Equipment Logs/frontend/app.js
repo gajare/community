@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
         tokenStatus.className = 'token-status token-valid';
         setTimeout(() => {
             successDiv.remove();
-        }, 3000);
+        }, 3001);
     }
 
     // Initial fetch of logs if token exists
