@@ -218,7 +218,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     
         setLoading(filterSearchBtn, true);
-    
+        console.log("url:",`${API_BASE_URL}/api/call_logs/${id}`);
+        
         fetch(`${API_BASE_URL}/api/call_logs/${id}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`

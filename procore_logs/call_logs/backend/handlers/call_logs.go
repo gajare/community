@@ -111,7 +111,7 @@ func GetAccidentLogs(c *gin.Context) {
 	projectID := os.Getenv("PROCORE_PROJECT_ID")
 	companyID := os.Getenv("PROCORE_COMPANY_ID")
 
-	apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/" + projectID + "/accident_logs"
+	apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/" + projectID + "/call_logs"
 
 	req, err := http.NewRequest("GET", apiUrl, nil)
 	if err != nil {
@@ -140,6 +140,7 @@ func GetAccidentLogs(c *gin.Context) {
 }
 
 func GetAccidentLogDetails(c *gin.Context) {
+
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
@@ -154,9 +155,13 @@ func GetAccidentLogDetails(c *gin.Context) {
 
 	projectID := os.Getenv("PROCORE_PROJECT_ID")
 	companyID := os.Getenv("PROCORE_COMPANY_ID")
+	// apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/117922/call_logs/712"
 
-	apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/" + projectID + "/accident_logs/" + logID
+	apiUrl := "https://sandbox.procore.com/rest/v1.0/projects/" + projectID + "/call_logs/" + logID
+	fmt.Println("projectID :", projectID)
+	fmt.Println("logID :", logID)
 
+	fmt.Println("api url :", apiUrl)
 	req, err := http.NewRequest("GET", apiUrl, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -207,7 +212,7 @@ func GetFilteredAccidentLogs(c *gin.Context) {
 	}
 
 	// Build Procore API URL with date parameters
-	baseURL := fmt.Sprintf("https://sandbox.procore.com/rest/v1.0/projects/%s/accident_logs", projectID)
+	baseURL := fmt.Sprintf("https://sandbox.procore.com/rest/v1.0/projects/%s/call_logs", projectID)
 
 	// Create request to Procore API
 	req, err := http.NewRequest("GET", baseURL, nil)
@@ -362,7 +367,7 @@ func CreateAccidentLog(c *gin.Context) {
 		formData.Set("accident_log[location]", logData.Location)
 	}
 
-	req, err := http.NewRequest("POST", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/accident_logs", bytes.NewBufferString(formData.Encode()))
+	req, err := http.NewRequest("POST", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/call_logs", bytes.NewBufferString(formData.Encode()))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -440,7 +445,7 @@ func UpdateAccidentLog(c *gin.Context) {
 		formData.Set("accident_log[location]", logData.Location)
 	}
 
-	req, err := http.NewRequest("PUT", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/accident_logs/"+logID, bytes.NewBufferString(formData.Encode()))
+	req, err := http.NewRequest("PUT", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/call_logs/"+logID, bytes.NewBufferString(formData.Encode()))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -483,7 +488,7 @@ func DeleteAccidentLog(c *gin.Context) {
 	projectID := os.Getenv("PROCORE_PROJECT_ID")
 	companyID := os.Getenv("PROCORE_COMPANY_ID")
 
-	req, err := http.NewRequest("DELETE", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/accident_logs/"+logID, nil)
+	req, err := http.NewRequest("DELETE", "https://sandbox.procore.com/rest/v1.0/projects/"+projectID+"/call_logs/"+logID, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
