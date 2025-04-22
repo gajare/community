@@ -5,7 +5,7 @@ import (
 	"os"
 	"procore-call-logs/handlers"
 
-	// "procore-accident-logs/handlers"
+	// "procore-call_logs/handlers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -37,17 +37,17 @@ func main() {
 
 	// Routes
 	router.POST("/api/auth/token", handlers.GetAuthToken)
-	router.GET("/api/accident-logs", handlers.GetAccidentLogs)
-	router.GET("/api/accident-logs/filter", handlers.GetFilteredAccidentLogs)
-	router.POST("/api/accident-logs", handlers.CreateAccidentLog)
-	router.PUT("/api/accident-logs/:id", handlers.UpdateAccidentLog)
-	router.DELETE("/api/accident-logs/:id", handlers.DeleteAccidentLog)
-	router.GET("/api/accident-logs/:id", handlers.GetAccidentLogDetails)
+	router.GET("/api/call_logs", handlers.GetAccidentLogs)
+	router.GET("/api/call_logs/filter", handlers.GetFilteredAccidentLogs)
+	router.POST("/api/call_logs", handlers.CreateAccidentLog)
+	router.PUT("/api/call_logs/:id", handlers.UpdateAccidentLog)
+	router.DELETE("/api/call_logs/:id", handlers.DeleteAccidentLog)
+	router.GET("/api/call_logs/:id", handlers.GetAccidentLogDetails)
 
 	// Start server
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8082"
 	}
 	router.Run(":" + port)
 }

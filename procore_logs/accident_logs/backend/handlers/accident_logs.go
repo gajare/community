@@ -197,9 +197,6 @@ func GetFilteredAccidentLogs(c *gin.Context) {
 	severity := c.Query("severity")
 	company := c.Query("company")
 
-	fmt.Println("Received filter parameters:")
-	fmt.Printf("start_date: %s, end_date: %s, severity: %s, company: %s\n", startDate, endDate, severity, company)
-
 	// Get required environment variables
 	projectID := os.Getenv("PROCORE_PROJECT_ID")
 	companyID := os.Getenv("PROCORE_COMPANY_ID")
@@ -232,7 +229,6 @@ func GetFilteredAccidentLogs(c *gin.Context) {
 	req.Header.Set("Authorization", accessToken)
 	req.Header.Set("Procore-Company-Id", companyID)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	// fmt.Println("\nrequest :", req, "\n")
 
 	// Execute the request
 	client := &http.Client{}
@@ -241,8 +237,6 @@ func GetFilteredAccidentLogs(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to contact Procore API: " + err.Error()})
 		return
 	}
-	fmt.Printf("Procore API response code: %d\n", resp.StatusCode)
-	// fmt.Printf("Procore API response body: %s\n", string(body))
 
 	defer resp.Body.Close()
 
@@ -252,7 +246,6 @@ func GetFilteredAccidentLogs(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read response: " + err.Error()})
 		return
 	}
-	fmt.Printf("Procore API response body: %s\n", string(body))
 
 	// Parse the response
 	var logs []map[string]interface{}
