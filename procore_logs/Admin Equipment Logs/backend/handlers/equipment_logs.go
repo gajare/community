@@ -101,7 +101,7 @@ func GetAuthToken(c *gin.Context) {
 	})
 }
 
-func GetcallLogs(c *gin.Context) {
+func GetEquipmentLogs(c *gin.Context) {
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
@@ -139,7 +139,7 @@ func GetcallLogs(c *gin.Context) {
 	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
 }
 
-func GetcallLogDetails(c *gin.Context) {
+func GetEquipmentLogsDetails(c *gin.Context) {
 
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
@@ -188,7 +188,7 @@ func GetcallLogDetails(c *gin.Context) {
 	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
 }
 
-func GetFilteredCallLogs(c *gin.Context) {
+func GetFilteredEquipmentLogs(c *gin.Context) {
 	// Get Authorization header
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
@@ -336,7 +336,7 @@ func GetFilteredCallLogs(c *gin.Context) {
 	c.JSON(http.StatusOK, filteredLogs)
 }
 
-func CreateCallLog(c *gin.Context) {
+func CreateEquipmentLogs(c *gin.Context) {
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
@@ -394,7 +394,7 @@ func CreateCallLog(c *gin.Context) {
 	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
 }
 
-func UpdateCallLog(c *gin.Context) {
+func UpdateEquipmentLogs(c *gin.Context) {
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
@@ -472,7 +472,7 @@ func UpdateCallLog(c *gin.Context) {
 	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
 }
 
-func DeleteCallLog(c *gin.Context) {
+func DeleteEquipmentLogs(c *gin.Context) {
 	accessToken := c.GetHeader("Authorization")
 	if accessToken == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})

@@ -1,9 +1,9 @@
 package main
 
 import (
+	"equipment_logs/handlers"
 	"log"
 	"os"
-	"procore-call-logs/handlers"
 
 	// "procore-equipment_logs/handlers"
 
@@ -37,12 +37,12 @@ func main() {
 
 	// Routes
 	router.POST("/api/auth/token", handlers.GetAuthToken)
-	router.GET("/api/equipment_logs", handlers.GetcallLogs)
-	router.GET("/api/equipment_logs/filter", handlers.GetFilteredCallLogs)
-	router.POST("/api/equipment_logs", handlers.CreateCallLog)
-	router.PUT("/api/equipment_logs/:id", handlers.UpdateCallLog)
-	router.DELETE("/api/equipment_logs/:id", handlers.DeleteCallLog)
-	router.GET("/api/equipment_logs/:id", handlers.GetcallLogDetails)
+	router.GET("/api/equipment_logs", handlers.GetEquipmentLogs)
+	router.GET("/api/equipment_logs/filter", handlers.GetFilteredEquipmentLogs)
+	router.POST("/api/equipment_logs", handlers.CreateEquipmentLogs)
+	router.PUT("/api/equipment_logs/:id", handlers.UpdateEquipmentLogs)
+	router.DELETE("/api/equipment_logs/:id", handlers.DeleteEquipmentLogs)
+	router.GET("/api/equipment_logs/:id", handlers.GetEquipmentLogsDetails)
 
 	// Start server
 	port := os.Getenv("PORT")
