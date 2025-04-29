@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const companyFilter = document.getElementById('companyFilter');
     const filterLogsBtn = document.getElementById('filterLogsBtn');
     const filterSearchBtn = document.getElementById('filterSearchBtn');
+    const createLogBtn = document.getElementById('createLogBtn');
     tokenStatus.style.display = "none";
     const clearFilterBtn = document.getElementById('clearFilterBtn');
 
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     refreshLogsBtn.addEventListener('click', () => fetchAccidentLogs(currentFilters));
     filterLogsBtn.addEventListener('click', applyDateFilter);
     filterSearchBtn.addEventListener('click', applySearchFilter);
+    createLogBtn.addEventListener('click', createAccidentLog);
     clearFilterBtn.addEventListener('click', clearDateFilter);
 
     // Get authorization code
@@ -52,6 +54,55 @@ document.addEventListener('DOMContentLoaded', function() {
         const authUrl = `https://login-sandbox.procore.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
         window.open(authUrl, '_blank');
     }
+
+    // Add this new function
+function createAccidentLog() {
+    if (!accessToken) {
+        showError('Please authenticate first');
+        return;
+    }
+
+    // Collect data - you'll need to add form fields to your HTML for these values
+    const formData = new URLSearchParams();
+    formData.append('accident_log[comments]', 'Accident Log comments');
+    formData.append('accident_log[date]', '2025-04-13');
+    formData.append('accident_log[datetime]', '2025-04-13T12:00:00Z');
+    formData.append('accident_log[involved_company]', 'VGPS Technologies');
+    formData.append('accident_log[involved_name]', '1234');
+    formData.append('accident_log[time_hour]', '12');
+    formData.append('accident_log[time_minute]', '30');
+    formData.append('accident_log[custom_fields][machine_involved]', 'by machine');
+
+    setLoading(createLogBtn, true);
+
+    fetch(`${API_BASE_URL}/api/accident-logs`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Bearer ${accessToken}`,
+            'Procore-Company-Id': '4264807' // Replace with actual company ID
+        },
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(errorData.error || 'Failed to create accident log');
+            });
+        }
+        return response.json();
+    })
+    .then(() => {
+        showSuccess('Accident log created successfully!');
+        fetchAccidentLogs(currentFilters); // Refresh the list
+    })
+    .catch(error => {
+        showError(error.message);
+    })
+    .finally(() => {
+        setLoading(createLogBtn, false);
+    });
+}
 
     // Get access token
     function getAccessToken() {
