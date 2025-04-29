@@ -6,7 +6,7 @@ spec:
   selector:
     app: call-logs
     tier: frontend
-    ports:
-      -protocol: TCP
-      port: 82
-      targetPort: 3002
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
