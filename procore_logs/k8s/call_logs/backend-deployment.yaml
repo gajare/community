@@ -1,0 +1,36 @@
+apiVersion: app/v1
+kind: Deployemnt
+metadata:
+    name: call-logs-backend
+    labels:
+        app: call-logs
+        tier: backend
+spec:
+    replicas: 2
+    selector:
+        matchLabls:
+            app: call-logs
+            tier: 2
+    template:
+        metadata:
+            labels:
+                app: call-logs
+                tier: backend
+        spec:
+            containers:
+                -name: call-logs-backend
+                image: your-registery/call-logs-backend:lates
+                ports:
+                -containerPort: 8082
+                envForm:
+                  - configMapRef:
+                        name: call-logs-config
+                  - secretRef:
+                        name: call-logs-secrets
+                resources:
+                    request:
+                        cpu: "10m"
+                        memory: "128Mi"
+                    limits:
+                        cpu: "50m"
+                        memory: "512Mi"
