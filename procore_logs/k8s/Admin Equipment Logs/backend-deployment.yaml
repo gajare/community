@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-equipment-logs-backend
+  labels:
+    app: admin-equipment-logs
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: admin-equipment-logs
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: admin-equipment-logs
+        tier: backend
+    spec:
+      containers:
+      - name: admin-equipment-logs-backend
+        image: your-registry/admin-equipment-logs-backend:latest
+        ports:
+        - containerPort: 8081 # Changed to match your PORT
+        env:
+        - name: PORT
+          value: "8082"
+        - name: PROCORE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: admin-equipment-logs-secrets
+              key: PROCORE_CLIENT_ID
+        - name: PROCORE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: admin-equipment-logs-secrets
+              key: PROCORE_CLIENT_SECRET
+        - name: PROCORE_PROJECT_ID
+          value: "117922"
+        - name: PROCORE_COMPANY_ID
+          valueFrom:
+            secretKeyRef:
+              name: admin-equipment-logs-secrets
+              key: PROCORE_COMPANY_ID
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
