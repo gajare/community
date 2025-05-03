@@ -1,11 +1,10 @@
-FROM node:24-alpinene
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY .  . 
+COPY . .
 
 RUN npm install -g http-server
 
 EXPOSE 3000
-CMD [ "http-server","-p",3001 ]
-
+CMD ["http-server", "-p", "3001"]

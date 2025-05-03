@@ -1,18 +1,15 @@
 # Build Stage
-FROM golang:1.24.2 as buider
+FROM golang:1.24.2 AS builder
 WORKDIR /app
 COPY . .
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
-#RUN-TIME STAGE
+# Run-time Stage
 FROM alpine:latest
-
 WORKDIR /app
-COPY --from=buider /app/main .
-COPY --from=buider /app/.env .
+COPY --from=builder /app/main .
+COPY --from=builder /app/.env .
 
 EXPOSE 8082
-CMD [ "./main" ]
-
-
+CMD ["./main"]
