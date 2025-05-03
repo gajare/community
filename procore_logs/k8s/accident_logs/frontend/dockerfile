@@ -1,0 +1,9 @@
+FROM node:24-alpine
+
+WORKDIR /app
+COPY . .
+
+RUN npm install -g http-server
+
+EXPOSE 3001
+CMD ["http-server", "-p", "3001"]
