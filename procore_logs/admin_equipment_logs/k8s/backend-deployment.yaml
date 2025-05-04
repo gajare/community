@@ -19,7 +19,8 @@ spec:
     spec:
       containers:
       - name: admin-equipment-logs-backend
-        image: your-registry/admin-equipment-logs-backend:latest
+        image: admin-equipment-logs-backend:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8081 # Changed to match your PORT
         env:

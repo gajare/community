@@ -19,7 +19,8 @@ spec:
     spec:
       containers:
       - name: admin-equipment-logs-frontend
-        image: your-registry/admin-equipment-logs-frontend:latest
+        image: admin-equipment-logs-frontend:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3001
         env:

@@ -19,7 +19,8 @@ spec:
     spec:
       containers:
       - name: call-logs-frontend
-        image: your-registry/call-logs-frontend:latest
+        image: call-logs-frontend:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
         env:
