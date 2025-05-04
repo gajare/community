@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
       - name: accident-logs-backend
-        image: accident-logs-backend:latest
-        imagePullPolicy: IfNotPresent
+        image: accident-logs-backend:local # CHANGED
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080 # Changed to match your PORT
         env:

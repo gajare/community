@@ -19,13 +19,13 @@ spec:
     spec:
       containers:
       - name: accident-logs-frontend
-        image: accident-logs-frontend:latest
-        imagePullPolicy: IfNotPresent
+        image: accident-logs-frontend:local # Changed from :latest to :local
+        imagePullPolicy: Never # Correct for local development
         ports:
-        - containerPort: 3000
+        - containerPort: 3001 # Changed from 3000 to match your accident-logs frontend port
         env:
         - name: BACKEND_URL
-          value: "http://accident-logs-backend"
+          value: "http://accident-logs-backend:8080" # Added port 8081
         resources:
           requests:
             cpu: "100m"

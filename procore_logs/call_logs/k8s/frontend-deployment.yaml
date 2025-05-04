@@ -19,13 +19,13 @@ spec:
     spec:
       containers:
       - name: call-logs-frontend
-        image: call-logs-frontend:latest
-        imagePullPolicy: IfNotPresent
+        image: call-logs-frontend:local
+        imagePullPolicy: Never
         ports:
         - containerPort: 3000
         env:
         - name: BACKEND_URL
-          value: "http://call-logs-backend"
+          value: "http://call-logs-backend:8081"
         resources:
           requests:
             cpu: "100m"

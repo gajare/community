@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
       - name: call-logs-backend
-        image: call-logs-backend:latest
-        imagePullPolicy: IfNotPresent
+        image: call-logs-backend:local
+        imagePullPolicy: Never
         ports:
         - containerPort: 8082 # Changed to match your PORT
         env:
