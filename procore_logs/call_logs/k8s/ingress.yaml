@@ -10,7 +10,7 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
 spec:
   rules:
-  - host: call-logs.yourdomain.com
+  - host: call-logs.local
     http:
       paths:
       - path: /
@@ -20,7 +20,7 @@ spec:
             name: call-logs-frontend
             port:
               number: 80
-      - path: /api(/|$)(.*) # Updated to handle all /api routes
+      - path: /api(/|$)(.*)
         pathType: Prefix
         backend:
           service:

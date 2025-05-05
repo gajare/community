@@ -22,7 +22,7 @@ spec:
         image: call-logs-backend:local
         imagePullPolicy: Never
         ports:
-        - containerPort: 8082 # Changed to match your PORT
+        - containerPort: 8082
         env:
         - name: PORT
           value: "8082"
