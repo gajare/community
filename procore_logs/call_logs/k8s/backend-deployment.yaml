@@ -19,13 +19,15 @@ spec:
     spec:
       containers:
       - name: call-logs-backend
-        image: call-logs-backend:latest
-        imagePullPolicy: IfNotPresent
+        image: gajare147/call-logs-backend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8082
         env:
         - name: PORT
-          value: "8082" # Set directly or use the correct secret reference
+          value: "8082"
+        - name: ENV
+          value: "production"
         - name: ALLOWED_ORIGINS
           valueFrom:
             secretKeyRef:

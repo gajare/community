@@ -5,41 +5,57 @@ import (
 	"os"
 	"procore-call-logs/handlers"
 
-	// "procore-call_logs/handlers"
-
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	// "github.com/joho/godotenv"
 )
 
 func main() {
-	// Load environment variables
-	err := godotenv.Load("../.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	// Load .env file only if running outside of Kubernetes (i.e., locally)
+	if os.Getenv("KUBERNETES_SERVICE_HOST") == "" {
+		if err := godotenv.Load(); err != nil {
+			log.Println("No .env file found. Continuing with system environment variables.")
+		}
 	}
 
-	// Initialize Gin router
-	router := gin.Default()
+	// Read environment variables
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8082"
+	}
 
-	frontendURL := os.Getenv("FRONTEND_URL")
+	frontendURL := os.Getenv("ALLOWED_ORIGINS")
 	if frontendURL == "" {
 		frontendURL = "http://localhost:3002"
 	}
 
-	// Configure CORS
+	// Setup Gin router
+	router := gin.Default()
+
+	// CORS middleware
 	router.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", frontendURL)
+		allowedOrigins := map[string]bool{
+			"http://localhost:3002":       true,
+			"http://localhost:3000":       true,
+			"http://call-logs-frontend":   true,
+		}
+	
+		origin := c.Request.Header.Get("Origin")
+		if allowedOrigins[origin] {
+			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+			c.Writer.Header().Set("Vary", "Origin") // Prevent caching issues
+		}
+	
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-
+	
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
 			return
 		}
 		c.Next()
 	})
+	
 
 	// Routes
 	router.POST("/api/auth/token", handlers.GetAuthToken)
@@ -51,9 +67,8 @@ func main() {
 	router.GET("/api/call_logs/:id", handlers.GetcallLogDetails)
 
 	// Start server
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8082"
+	log.Printf("Starting server on port %s...", port)
+	if err := router.Run(":" + port); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
 	}
-	router.Run(":" + port)
 }
