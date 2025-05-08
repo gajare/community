@@ -42,9 +42,7 @@ func main() {
 	router.POST("/api/auth/token", handlers.GetAuthToken)
 	router.GET("/api/accident-logs", handlers.GetAccidentLogs)
 	router.GET("/api/accident-logs/filter", handlers.GetFilteredAccidentLogs)
-	router.POST("/api/accident-logs", handlers.CreateAccidentLog)
-	router.PUT("/api/accident-logs/:id", handlers.UpdateAccidentLog)
-	router.DELETE("/api/accident-logs/:id", handlers.DeleteAccidentLog)
+	router.GET("/api/accident-type-logs/filter", handlers.GetAccidentTypeLogs)
 	router.GET("/api/accident-logs/:id", handlers.GetAccidentLogDetails)
 
 	// Start server

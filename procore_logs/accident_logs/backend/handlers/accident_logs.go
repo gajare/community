@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -26,6 +27,19 @@ type AccidentLog struct {
 	TimeMinute      int    `json:"time_minute"`
 	Severity        string `json:"severity"`
 	Location        string `json:"location"`
+}
+type AccidentTypeResponse struct {
+	AccidentLogID int    `json:"accident_log_id"`
+	AccidentType  string `json:"accident_type"`
+	Date          string `json:"date"`
+	ReportedBy    string `json:"reported_by"`
+	Comments      string `json:"comments"`
+}
+
+type CreatedBy struct {
+	ID    int    `json:"id"`
+	Login string `json:"login"`
+	Name  string `json:"name"`
 }
 
 type AuthTokenRequest struct {
@@ -507,4 +521,103 @@ func DeleteAccidentLog(c *gin.Context) {
 	}
 
 	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
+}
+func GetAccidentTypeLogs(c *gin.Context) {
+	fmt.Println("hiiii")
+	// Get Authorization header
+	accessToken := c.GetHeader("Authorization")
+	if accessToken == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
+		return
+	}
+
+	// Extract query parameters - using start_date and end_date now
+	startDate := c.Query("start_date")
+	endDate := c.Query("end_date")
+	accidentType := c.Query("accident_type")
+	// severity := c.Query("severity")
+	// company := c.Query("comments")
+
+	// Get required environment variables
+	projectID := os.Getenv("PROCORE_PROJECT_ID")
+	companyID := os.Getenv("PROCORE_COMPANY_ID")
+
+	if projectID == "" || companyID == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Missing required environment variables"})
+		return
+	}
+
+	// Build Procore API URL with date parameters
+	baseURL := fmt.Sprintf("https://sandbox.procore.com/rest/v1.0/projects/%s/accident_logs", projectID)
+
+	// Create request to Procore API
+	req, err := http.NewRequest("GET", baseURL, nil)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create request: " + err.Error()})
+		return
+	}
+
+	// Add query parameters
+	q := req.URL.Query()
+	if startDate != "" {
+		q.Add("start_date", startDate)
+	}
+	if endDate != "" {
+		q.Add("end_date", endDate)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	req.Header.Set("Authorization", accessToken)
+	req.Header.Set("Procore-Company-Id", companyID)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// Execute the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to contact Procore API: " + err.Error()})
+		return
+	}
+
+	defer resp.Body.Close()
+
+	// Read the response
+	if resp.StatusCode != http.StatusOK {
+		return
+	}
+
+	var logs []AccidentLog
+	if err := json.NewDecoder(resp.Body).Decode(&logs); err != nil {
+		return
+	}
+	// Fetch and process logs
+
+	// Filter results
+	results := filterLogs(logs, accidentType)
+	c.JSON(http.StatusOK, results)
+}
+
+func filterLogs(logs []AccidentLog, accidentType string) []AccidentTypeResponse {
+	results := make([]AccidentTypeResponse, 0)
+	for _, log := range logs {
+		extractedType := extractAccidentType(log.Comments)
+		if extractedType != "" && (accidentType == "" || strings.EqualFold(extractedType, accidentType)) {
+			results = append(results, AccidentTypeResponse{
+				AccidentLogID: log.ID,
+				AccidentType:  extractedType,
+				Date:          log.Date,
+				Comments:      log.Comments,
+			})
+		}
+	}
+	return results
+}
+
+func extractAccidentType(comments string) string {
+	re := regexp.MustCompile(`(?i)\[Type: ([^\]]+)\]`)
+	matches := re.FindStringSubmatch(comments)
+	if len(matches) > 1 {
+		return strings.TrimSpace(matches[1])
+	}
+	return ""
 }

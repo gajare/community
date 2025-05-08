@@ -159,10 +159,10 @@ function createAccidentLog() {
         const params = new URLSearchParams();
         if (filters.fromDate) params.append('start_date', filters.fromDate);
         if (filters.toDate) params.append('end_date', filters.toDate);
-        if (filters.severity) params.append('severity', filters.severity);
-        if (filters.accidentType) params.append('accidentType', filters.accidentType);
+        // if (filters.severity) params.append('severity', filters.severity);
+        // if (filters.accidentType) params.append('accidentType', filters.accidentType);
 
-        console.log("Url:",params.toString() 
+        console.log(" fetchAccidentLogs Url:",params.toString() 
         ? `${API_BASE_URL}/api/accident-logs/filter?${params.toString()}`
         : `${API_BASE_URL}/api/accident-logs`);
         
@@ -200,6 +200,61 @@ function createAccidentLog() {
         });
     }
 
+    // Fetch accident-type logs
+    function fetchAccidentTypeLogs(filters = {}) {
+    
+        if (!accessToken) {
+            showError('Please authenticate first');
+            return Promise.reject('No access token');
+        }
+
+        setLoading(refreshLogsBtn, true);
+        
+        // In the fetchAccidentLogs function:
+        const params = new URLSearchParams();
+        if (filters.fromDate) params.append('start_date', filters.fromDate);
+        if (filters.toDate) params.append('end_date', filters.toDate);
+        // if (filters.severity) params.append('severity', filters.severity);
+        if (filters.accidentType) params.append('accidentType', filters.accidentType);
+
+        console.log("Url:",params.toString() 
+        ? `${API_BASE_URL}/api/accident-type-logs/filter?${params.toString()}`
+        : `${API_BASE_URL}/api/accident-logs`);
+        
+        
+        const url = params.toString() 
+            ? `${API_BASE_URL}/api/accident-type-logs/filter?${params.toString()}`
+            : `${API_BASE_URL}/api/accident-logs`;
+
+        return fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || 'Failed to fetch logs');
+                });
+            }
+            return response.json();
+        })
+        .then(logs => {
+            if (!Array.isArray(logs)) {
+                throw new Error('Invalid response format');
+            }
+            renderLogsList(logs);
+            return logs;
+        })
+        .catch(error => {
+            handleError(error);
+            throw error;
+        })
+        .finally(() => {
+            setLoading(refreshLogsBtn, false);
+        });
+    }
+    
     // Render logs list
     function renderLogsList(logs) {
         if (!logs || logs.length === 0) {
@@ -316,7 +371,8 @@ function createAccidentLog() {
             ...(accident_types && { accident_types }),
         };
 
-        fetchAccidentLogs(currentFilters)
+        if (!accident_types) {
+            fetchAccidentLogs(currentFilters)
             .catch(error => {
                 console.error('Filter error:', error);
                 showError('Failed to apply filters. Please try again.');
@@ -324,6 +380,18 @@ function createAccidentLog() {
             .finally(() => {
                 setLoading(filterLogsBtn, false);
             });
+        }else{
+            fetchAccidentTypeLogs(currentFilters)
+            .catch(error => {
+                console.error('Filter error:', error);
+                showError('Failed to apply filters. Please try again.');
+            })
+            .finally(() => {
+                setLoading(filterLogsBtn, false);
+            });
+        }
+
+        
     }
 
     // Clear date filter
