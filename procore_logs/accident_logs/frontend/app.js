@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fromDateInput = document.getElementById('fromDate');
     const toDateInput = document.getElementById('toDate');
     const severityFilter = document.getElementById('severityFilter');
-    const companyFilter = document.getElementById('companyFilter');
+    const accidentType = document.getElementById('accidentType');
     const filterLogsBtn = document.getElementById('filterLogsBtn');
     const filterSearchBtn = document.getElementById('filterSearchBtn');
     const createLogBtn = document.getElementById('createLogBtn');
@@ -67,7 +67,7 @@ function createAccidentLog() {
     formData.append('accident_log[comments]', 'Accident Log comments');
     formData.append('accident_log[date]', '2025-04-13');
     formData.append('accident_log[datetime]', '2025-04-13T12:00:00Z');
-    formData.append('accident_log[involved_company]', 'VGPS Technologies');
+    formData.append('accident_log[involved_accidentType]', 'VGPS Technologies');
     formData.append('accident_log[involved_name]', '1234');
     formData.append('accident_log[time_hour]', '12');
     formData.append('accident_log[time_minute]', '30');
@@ -160,7 +160,12 @@ function createAccidentLog() {
         if (filters.fromDate) params.append('start_date', filters.fromDate);
         if (filters.toDate) params.append('end_date', filters.toDate);
         if (filters.severity) params.append('severity', filters.severity);
-        if (filters.company) params.append('company', filters.company);
+        if (filters.accidentType) params.append('accidentType', filters.accidentType);
+
+        console.log("Url:",params.toString() 
+        ? `${API_BASE_URL}/api/accident-logs/filter?${params.toString()}`
+        : `${API_BASE_URL}/api/accident-logs`);
+        
         
         const url = params.toString() 
             ? `${API_BASE_URL}/api/accident-logs/filter?${params.toString()}`
@@ -205,7 +210,7 @@ function createAccidentLog() {
         logsList.innerHTML = logs.map(log => `
             <div class="log-item" data-id="${log.id}">
                 <div class="log-header">
-                    <h3>${log.involved_name || 'Unknown'} (${log.involved_company || 'Unknown'})</h3>
+                    <h3>${log.involved_name || 'Unknown'} (${log.involved_accidentType || 'Unknown'})</h3>
                     <span class="severity-${log.severity || 'unknown'}">${(log.severity || 'unknown').toUpperCase()}</span>
                 </div>
                 <div class="log-details">
@@ -226,23 +231,6 @@ function createAccidentLog() {
             </div>
         `).join('');
     }
-
-    // // Add debounce to search input
-    // let daterangeTimeout;
-    // searchFilter.addEventListener('input', () => {
-    //     clearTimeout(daterangeTimeout);
-    //     daterangeTimeout = setTimeout(() => {
-    //         applySearchFilter();
-    //     }, 500);
-    // });
-
-    // let searchTimeout;
-    // searchFilter.addEventListener('input', () => {
-    //     clearTimeout(searchTimeout);
-    //     searchTimeout = setTimeout(() => {
-    //         applySearchFilter();
-    //     }, 500);
-    // });
 
     function applySearchFilter() {
         const searchTerm = searchFilter.value.trim();
@@ -306,7 +294,7 @@ function createAccidentLog() {
         const fromDate = fromDateInput.value;
         const toDate = toDateInput.value;
         const severity = severityFilter.value;
-        const company = companyFilter.value.trim();
+        const accident_types = accidentType.value.trim();
 
         // Validate dates
         if (fromDate && toDate) {
@@ -325,7 +313,7 @@ function createAccidentLog() {
             ...(fromDate && { fromDate }),
             ...(toDate && { toDate }),
             // ...(severity && { severity }),
-            // ...(company && { company }),
+            ...(accident_types && { accident_types }),
         };
 
         fetchAccidentLogs(currentFilters)
@@ -343,7 +331,7 @@ function createAccidentLog() {
         fromDateInput.valueAsDate = firstDayOfMonth;
         toDateInput.valueAsDate = today;
         severityFilter.value = '';
-        companyFilter.value = '';
+        accidentType.value = '';
         currentFilters = {};
         fetchAccidentLogs();
     }
