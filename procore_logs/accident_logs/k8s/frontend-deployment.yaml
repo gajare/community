@@ -25,7 +25,7 @@ spec:
         - containerPort: 3001 # Changed from 3000 to match your accident-logs frontend port
         env:
         - name: BACKEND_URL
-          value: "http://accident-logs-backend:8080" # Added port 8081
+          value: "http://accident-logs-backend:8083" # Added port 8081
         resources:
           requests:
             cpu: "100m"

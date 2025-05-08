@@ -22,10 +22,10 @@ spec:
         image: accident-logs-backend:local # CHANGED
         imagePullPolicy: Never
         ports:
-        - containerPort: 8080 # Changed to match your PORT
+        - containerPort: 8083 # Changed to match your PORT
         env:
         - name: PORT
-          value: "8080"
+          value: "8083"
         - name: PROCORE_CLIENT_ID
           valueFrom:
             secretKeyRef:

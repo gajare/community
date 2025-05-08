@@ -9,4 +9,4 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 8080 # Updated to match your PORT
+    targetPort: 8083 # Updated to match your PORT
